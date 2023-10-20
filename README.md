@@ -3,6 +3,8 @@ a complete workflow that can be dockerized for the long read assembly, it allows
 
 You can select the case to make your genome browsers tracks and direct plugins into the jbrowse for the visualization or snp calling tracts for the visualization. Finished code: 2023-10-20, next update will be with the genome visualization tracts. it does everything for the pacbio and oxford nanopore sequencing. More support for oxford nanopore in the next release.
 
+Adding support for the decalarative arrays and you will get more information. 
+
 ```
 # block of code is here for viewing
 read -r -p "please provide the species name:": species
