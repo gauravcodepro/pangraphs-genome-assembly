@@ -1,4 +1,4 @@
-# dockerized_long_read_genome_assembly
+# dockerized_long_read_genome_assembly_pangraphs
 a complete workflow that can be dockerized for the long read assembly, it allows for the genome assembly update as well as it allows for the assembly from the start. if you have the illumina reads it allows for the genome mapping also. long read dockerized pipeline it will easier to execute and also better for the docker application. it will even make your genome browser tracks. 
 
 You can select the case to make your genome browsers tracks and direct plugins into the jbrowse for the visualization or snp calling tracts for the visualization. Finished code: 2023-10-20, next update will be with the genome visualization tracts. it does everything for the pacbio and oxford nanopore sequencing. More support for oxford nanopore in the next release.
