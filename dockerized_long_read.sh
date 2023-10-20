@@ -273,8 +273,8 @@ then
     mkdir $(pwd)/new_genomic_reads
     mkdir $(pwd)/combined_assembly
     cd $(pwd)/previous_genome_assembly 
-    cp -r "${previousassembly}"/* $(pwd)/previous_genome_assembly
-    cp -r "${newreadsdirectory}/*" $(pwd)/new_genomic_reads
+    cp -r "${previousassembly}"/*.fasta $(pwd)/previous_genome_assembly
+    cp -r "${newreadsdirectory}/*.gz" $(pwd)/new_genomic_reads
     cd $(pwd)/new_genomic_reads
     tar zxvf *.gz && cp -r *.fasta $(pwd)/combined_assembly \
                              && cd .. && cd $(pwd)/new_genomic_reads
@@ -334,8 +334,8 @@ then
     mkdir "$(pwd)/new_genomic_reads"
     mkdir "$(pwd)/combined_assembly"
     cd "$(pwd)/previous_genome_assembly"
-    cp -r "${previousassembly}"/* $(pwd)/previous_genome_assembly
-    cp -r "${newreadsdirectory}/*" $(pwd)/new_genomic_reads
+    cp -r "${previousassembly}"/*.fasta $(pwd)/previous_genome_assembly
+    cp -r "${newreadsdirectory}"/*.gz $(pwd)/new_genomic_reads
     cd "$(pwd)/new_genomic_reads"
     tar zxvf *.gz && cp -r *.fasta $(pwd)/combined_assembly \
                              && cd .. && cd $(pwd)/new_genomic_reads
