@@ -293,7 +293,7 @@ then
                                                         -minReadLength="${read_selection}" \
                                                         -merylMemory="${merylmemory}" 
                                                         -gnuplotImageFormat=png \
-                                                        -ovsThreads="${thread}" \ 
+                                                        -ovsThreads="${thread}" \
                                                         -ovbThreads="${thread}" \
                                                         -pacbio-raw "${unaligned_reads_assembly}"
     genome_assembly_fasta_file=$(ls *.fasta)
@@ -399,7 +399,7 @@ then
     if [[ $read_removal ]]
     then
         blasr all_reads.fasta "${genome_contamant}" --best "${mapping}" --bam \
-                                  "${species}".bam --unaligned "${species}".unaligned.fasta
+                                  "${species}" --unaligned "${species}".unaligned.fasta
         echo "finished cleaning of the reads"
     fi 
     cp -r "${species}".unaligned.fasta $(pwd)/genome_assembly
