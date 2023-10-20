@@ -72,6 +72,7 @@ then
     read -r -p "please provide the memory bindings for the meryl:": merylmemory
 elif [[ $assembler == "mecatref" ]]
 then 
+   read -r -p "please provide the path for the genome assembly reads:" reads
    read -r -p "please provide the name of the reference genome fasta file:": refgenome
 elif [[ $assembler == "flye" ]]
 then 
@@ -93,20 +94,20 @@ read -r -p "do you want the annotations to be done:": annotations
 read -r -p "do you want to create the genome tracks:": tracks
 
 echo            "thank you for choosing the workflow options:":
-echo        "unless a specified diretory path is provided it will use the `pwd` as the working directory and all 
-                                        analysis will be put int the `pwd` directory"
+echo        "unless a specified diretory path is provided it will use the $(pwd) as the working directory and all 
+                                        analysis will be put int the $(pwd) directory"
 closeuptext="You havent selected enough options to run this workflow"
     
 if [[ $first == "yes" ]] && 
                     [[ $assembler == "canu" ]] && 
                                 [[ $alignment_tracks ]]
 then 
-    mkdir $(pwd)/reads_assembly
-    mkdir $(pwd)/genome_assembly
+    mkdir "$(pwd)/reads_assembly"
+    mkdir "$(pwd)/genome_assembly"
     reads_directory="${reads}"
-        for i in reads_directory
+        for i in "${reads_directory}"/*.gz
         do 
-            gzip $i
+            gzip "$i"
         done
         cat *.fasta > all_reads.fasta
         mv all_reads.fasta $(pwd)/reads_assembly
@@ -118,7 +119,7 @@ then
         echo "finished cleaning of the reads"
     fi 
     cp -r "${species}".unaligned.fasta $(pwd)/genome_assembly
-    cd $(pwd)/genome_assembly
+    cd "$(pwd)/genome_assembly"
         echo "working in the present genome assembly directory"
     unaligned_reads_assembly="$(pwd)/genome_assembly/${species}".unaligned.fasta
     canu gridOptions="--time=24:00:00" -corMhapSensitivity="${sensitivity}" 
@@ -158,13 +159,12 @@ elif  [[ $first == "yes" ]] &&
                               [[ $alignment_tracks ]]
 then
 
-    mkdir $(pwd)/reads_assembly
-    mkdir $(pwd)/genome_assembly
-    read -r -p "please provide the path for the genome assembly reads:" reads
-    reads_directory=$reads
-        for i in $reads
+    mkdir "$(pwd)/reads_assembly"
+    mkdir "$(pwd)/genome_assembly"
+    reads_directory="${reads}"
+        for i in "${reads_directory}"/*.gz
         do 
-            gzip $i
+            gzip "$i"
         done
         cat *.fasta > all_reads.fasta
         mv all_reads.fasta $(pwd)/reads_assembly
@@ -176,7 +176,7 @@ then
         echo "finished cleaning of the reads"
     fi 
     cp -r "${species}".unaligned.fasta $(pwd)/genome_assembly
-    cd $(pwd)/genome_assembly
+    cd "$(pwd)/genome_assembly"
         echo "working in the present genome assembly directory"
     unaligned_reads_assembly="$(pwd)/genome_assembly/${species}".unaligned.fasta
     flye --pacbio-raw "${unaligned_reads_assembly}" 
@@ -209,16 +209,14 @@ then
 
 elif  [[ $first == "yes" ]] && 
                   [[ $assembler == "mecatref" ]] && 
-                               [[ $alignment_tracks ]]
+                                  [[ $alignment_tracks ]]
 then
-
     mkdir $(pwd)/reads_assembly
     mkdir $(pwd)/genome_assembly
-    read -r -p "please provide the path for the genome assembly reads:" reads
-    reads_directory=$reads
-        for i in $reads
+    reads_directory="${reads}"
+        for i in "${reads_directory}"/*.gz
         do 
-            gzip $i
+            gzip "$i"
         done
         cat *.fasta > all_reads.fasta
         mv all_reads.fasta $(pwd)/reads_assembly
@@ -286,8 +284,8 @@ then
                                             "${species}".unaligned.fasta
         echo "finished cleaning of the reads"
     fi 
-    cp -r "${species}".unaligned.fasta $(pwd)/genome_assembly
-    mkdir $(pwd)/refined_genome_assembly
+    cp -r "${species}".unaligned.fasta "$(pwd)/genome_assembly"
+    mkdir "$(pwd)/refined_genome_assembly"
     canu gridOptions="--time=24:00:00" -corMhapSensitivity="${sensitivity}" 
                                                         -p "{$species}" \ 
                                                         -d "$(pwd)/refined_genome_assembly" \
@@ -326,18 +324,18 @@ elif  [[ $first == "no" ]] &&
                               [[ $alignment_tracks ]]
 then
 
-    mkdir $(pwd)/previous_genome_assembly
-    mkdir $(pwd)/new_genomic_reads
-    mkdir $(pwd)/combined_assembly
-    cd $(pwd)/previous_genome_assembly 
+    mkdir "$(pwd)/previous_genome_assembly"
+    mkdir "$(pwd)/new_genomic_reads"
+    mkdir "$(pwd)/combined_assembly"
+    cd "$(pwd)/previous_genome_assembly"
     cp -r "${previousassembly}"/* $(pwd)/previous_genome_assembly
     cp -r "${newreadsdirectory}/*" $(pwd)/new_genomic_reads
-    cd $(pwd)/new_genomic_reads
+    cd "$(pwd)/new_genomic_reads"
     tar zxvf *.gz && cp -r *.fasta $(pwd)/combined_assembly \
                              && cd .. && cd $(pwd)/new_genomic_reads
     for file in *.gz; do gunzip $f; done && \
                                cp -r *.fasta $(pwd)/combined_assembly
-    cd $(pwd)/combined_assembly && cat *.fasta >> update_genome_assembly.fasta
+    cd "$(pwd)/combined_assembly" && cat *.fasta >> update_genome_assembly.fasta
     updated_genome_assembly="$(pwd)/combined_assembly/update_genome_assembly.fasta"
     genome_contamant=$read_removal
     if [[ $read_removal ]]
@@ -347,14 +345,14 @@ then
         echo "finished cleaning of the reads"
     fi 
     cp -r "${species}".unaligned.fasta $(pwd)/genome_assembly
-    cd $(pwd)/genome_assembly
+    cd "$(pwd)/genome_assembly"
         echo "working in the present genome assembly directory"
     unaligned_reads_assembly="$(pwd)/genome_assembly/${species}".unaligned.fasta
-    flye --pacbio-raw "${unaligned_reads_assembly}" 
+    flye --pacbio-raw "${unaligned_reads_assembly}" \
                 --genome-size "${calibrate}" \
                 --threads "{threads}" \
-                --out-dir $(pwd)/genome_assembly 
-                --min-overlap "${flyeoverlap}"
+                --out-dir "$(pwd)/genome_assembly" \
+                --min-overlap "${flyeoverlap}" 
     genome_assembly_fasta_file=$(ls *.fasta)
     echo "creating the lastz maps of the assembled genomes to the reference genome"
     if [[ $threshold == "" ]] &&
@@ -384,18 +382,18 @@ elif  [[ $first == "no" ]] &&
                               [[ $alignment_tracks ]]
 then
 
-   mkdir $(pwd)/previous_genome_assembly
-    mkdir $(pwd)/new_genomic_reads
-    mkdir $(pwd)/combined_assembly
-    cd $(pwd)/previous_genome_assembly 
+    mkdir "$(pwd)/previous_genome_assembly"
+    mkdir "$(pwd)/new_genomic_reads"
+    mkdir "$(pwd)/combined_assembly"
+    cd "$(pwd)/previous_genome_assembly" 
     cp -r "${previousassembly}"/* $(pwd)/previous_genome_assembly
     cp -r "${newreadsdirectory}/*" $(pwd)/new_genomic_reads
-    cd $(pwd)/new_genomic_reads
-    tar zxvf *.gz && cp -r *.fasta $(pwd)/combined_assembly \
-                             && cd .. && cd $(pwd)/new_genomic_reads
-    for file in *.gz; do gunzip $f; done && \
-                               cp -r *.fasta $(pwd)/combined_assembly
-    cd $(pwd)/combined_assembly && cat *.fasta >> update_genome_assembly.fasta
+    cd "$(pwd)/new_genomic_reads"
+    tar zxvf *.gz && cp -r *.fasta $(pwd)/combined_assembly
+    cd "$(pwd)/new_genomic_reads"
+    for file in *.gz; do gunzip "$f"; done && \
+                               cp -r *.fasta "$(pwd)/combined_assembly"
+    cd "$(pwd)/combined_assembly" && cat *.fasta >> update_genome_assembly.fasta
     updated_genome_assembly="$(pwd)/combined_assembly/update_genome_assembly.fasta"
     genome_contamant=$read_removal
     if [[ $read_removal ]]
@@ -405,7 +403,7 @@ then
         echo "finished cleaning of the reads"
     fi 
     cp -r "${species}".unaligned.fasta $(pwd)/genome_assembly
-    cd $(pwd)/genome_assembly
+    cd "$(pwd)/genome_assembly"
         echo "working in the present genome assembly directory"
     unaligned_reads_assembly="$(pwd)/genome_assembly/${species}".unaligned.fasta
     reference = "$refgenome"
