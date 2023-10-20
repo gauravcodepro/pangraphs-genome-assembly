@@ -55,12 +55,18 @@ then
     read -r -p "please provide the genome file for the genome completeness estimation:": genomestimation
     read -r -p "do you have a reference genome or a contaminant file for the read removal:" read_removal
     read -r -p "how many reads you want to keep while mapping:" mapping
+    read -r -p "do you want to calculate the coverage also:": coverage
+    read -r -p "do you want to hybrid assembly also:": hybrid
+    read -r -p "do you want to polish the genome also:": polish
 fi
 read -r -p "are you updating an existing assembly:": update
 if [[ $update ]]
 then 
-    echo "please provide the path for the previous assembly:": previousassembly
-    echo "please provide the path for the directory containing the new reads:": newreadsdirectory
+    read -r -p "please provide the path for the previous assembly:": previousassembly
+    read -r -p "please provide the path for the directory containing the new reads:": newreadsdirectory
+    read -r -p "do you want to calculate the coverage also:": coverage
+    read -r -p "do you want to hybrid assembly also:": hybrid
+    read -r -p "do you want to polish the genome also:": polish
 fi 
 read -r -p "please select the choice of the assembler:": assembler
 if [[ $assembler == "canu" ]] 
