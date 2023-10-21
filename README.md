@@ -6,7 +6,7 @@ Finished code: 2023-10-20, next update will be with the genome visualization tra
 Finished update: 2023-10-21, added the support for the multiple genome polishing \
 More support for oxford nanopore in the next release. \
 Adding support for the decalarative arrays and you will get more information. \
-This code is constantly updated and also a docker withe several integrations is in preparation which will allow you to run the dockerized analysis. \
+This code is constantly updated and also a docker withe several integrations is in preparation which will allow you to run the dockerized analysis. 
 ```
 # block of code is here for viewing
 read -r -p "please provide the species name:": species
