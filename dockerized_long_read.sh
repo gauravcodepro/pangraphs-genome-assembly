@@ -66,9 +66,13 @@ then
     then 
         read -r -p "please provide the reference genome or a contaminant file:": read_removal
     fi
-read -r -p "how many reads you want to keep while mapping:" mapping
+read -r -p "how many reads you want to keep while blasr mapping:" mapping
 read -r -p "do you want to calculate the coverage also:": coverage
 read -r -p "do you want to polish the genome also:": polish
+if [[ $polish == "yes" ]]
+then 
+    read -r -p "which polishing way you want to use pilon or the jasper":polishoption
+fi
 fi
 read -r -p "are you updating an existing assembly:": update
 if [[ $update == "yes" ]]
@@ -119,7 +123,7 @@ closeuptext="You havent selected enough options to run this workflow"
     
 if  [[ $species ]]  && [[ $first == "yes" ]] && 
                  [[ $assembler == "canu" ]] && [[ $alignment_tracks == "yes" ]] &&
-                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]]
+                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]] && [[ $polishoption ]]
 then 
     mkdir "$(pwd)/reads_assembly"
     mkdir "$(pwd)/genome_assembly"
@@ -145,12 +149,16 @@ then
     done
     for file in "${illumina_directory}"/*.R1.fastq
     do 
+        cat *.R1.fastq >> final.R1.fastq
         echo "$file" > illumina.R1.txt
     done
+        echo final.R1.fastq >> illumina.R1.final.txt
     for file in "${illumina_directory}"/*.R2.fastq
     do 
+        cat *.R2.fastq >> final.R2.fastq
         echo "$file" > illumina.R2.txt
     done
+        echo final.R2.fastq >> illumina.R1.final.txt
     cd "${longreads}"
         blasr all_reads.fasta "${read_removal}" --best "${mapping}" --bam \
                                       "${species}".bam --unaligned "${species}".unaligned.fasta
@@ -213,15 +221,37 @@ then
 
     cd "${polishedgenome}"
     cp -r "${genome_assembly_fasta_file}" "${polishedgenome}"
+    if [[ $polishoption == "jasper" ]]
+    then 
+    wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz 
+        if [[ ! -f "jasper-1.0.3.tar.gz" ]]
+        then
+            echo "jasper file didnt downloaded and retrying"
+            wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz
+        elif [[ -f "jasper-1.0.3.tar.gz" ]]
+        then 
+            echo "file downloaded and processing for the installation"
+        fi 
+        tar zxvf jasper-1.0.3.tar.gz
+        cd jasper-1.0.3
+        ./configure --prefix=$PWD
+        make install
+        export PYTHONPATH=$(pwd)
+        (cd ..)
+    export PATH="${polishedgenome}"/jasper-1.0.3:$PATH
+    jasper.sh -t "${threads}" "${genome_assembly_fasta_file}" \
+            -r "${illumina_directory}"/final.R1.fastq "${illumina_directory}"/final.R1.fastq
+    else 
     java -Xmx100g -jar pilon-1.28.jar --genome "${genome_assembly_fasta_file}" \
                     --frags "${f}".sorted.bam --output "${species}".polished_genome \
                                 --threads 60 --changes --fix all --mindepth 10
+    fi 
     (cd ..)
     echo "processing finished"
  
 elif  [[ $species ]]  && [[ $first == "yes" ]] && 
                  [[ $assembler == "flye" ]] && [[ $alignment_tracks == "yes" ]] &&
-                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]]
+                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]] && [[ $polishoption ]]
 
 then 
     mkdir "$(pwd)/reads_assembly"
@@ -248,12 +278,16 @@ then
     done
     for file in "${illumina_directory}"/*.R1.fastq
     do 
+        cat *.R1.fastq >> final.R1.fastq
         echo "$file" > illumina.R1.txt
     done
+        echo final.R1.fastq >> illumina.R1.final.txt
     for file in "${illumina_directory}"/*.R2.fastq
     do 
+        cat *.R2.fastq >> final.R2.fastq
         echo "$file" > illumina.R2.txt
     done
+        echo final.R2.fastq >> illumina.R1.final.txt
     cd "${longreads}"
 
         blasr all_reads.fasta "${read_removal}" --best "${mapping}" --bam \
@@ -312,15 +346,37 @@ then
 
     cd "${polishedgenome}"
     cp -r "${genome_assembly_fasta_file}" "${polishedgenome}"
+    if [[ $polishoption == "jasper" ]]
+    then 
+    wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz 
+        if [[ ! -f "jasper-1.0.3.tar.gz" ]]
+        then
+            echo "jasper file didnt downloaded and retrying"
+            wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz
+        elif [[ -f "jasper-1.0.3.tar.gz" ]]
+        then 
+            echo "file downloaded and processing for the installation"
+        fi 
+        tar zxvf jasper-1.0.3.tar.gz
+        cd jasper-1.0.3
+        ./configure --prefix=$PWD
+        make install
+        export PYTHONPATH=$(pwd)
+        (cd ..)
+    export PATH="${polishedgenome}"/jasper-1.0.3:$PATH
+    jasper.sh -t "${threads}" "${genome_assembly_fasta_file}" \
+            -r "${illumina_directory}"/final.R1.fastq "${illumina_directory}"/final.R1.fastq
+    else 
     java -Xmx100g -jar pilon-1.28.jar --genome "${genome_assembly_fasta_file}" \
                     --frags "${f}".sorted.bam --output "${species}".polished_genome \
                                 --threads 60 --changes --fix all --mindepth 10
+    fi 
     (cd ..)
     echo "processing finished"
 
 elif  [[ $species ]]  && [[ $first == "yes" ]] && 
                  [[ $assembler == "mecatref" ]] && [[ $alignment_tracks == "yes" ]] &&
-                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]]
+                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]] && [[ $polishoption ]]
 then 
     mkdir "$(pwd)/reads_assembly"
     mkdir "$(pwd)/genome_assembly"
@@ -344,14 +400,18 @@ then
     do 
         gunzip "$file"
     done
-    for file in "${illumina_directory}"/*.R1.fastq
+   for file in "${illumina_directory}"/*.R1.fastq
     do 
+        cat *.R1.fastq >> final.R1.fastq
         echo "$file" > illumina.R1.txt
     done
+        echo final.R1.fastq >> illumina.R1.final.txt
     for file in "${illumina_directory}"/*.R2.fastq
     do 
+        cat *.R2.fastq >> final.R2.fastq
         echo "$file" > illumina.R2.txt
     done
+        echo final.R2.fastq >> illumina.R1.final.txt
     cd "${longreads}"
     genome_contamant=${read_removal}
         blasr all_reads.fasta "${genome_contamant}" --best "${mapping}" --bam \
@@ -409,15 +469,37 @@ then
 
     cd "${polishedgenome}"
     cp -r "${genome_assembly_fasta_file}" "${polishedgenome}"
+    if [[ $polishoption == "jasper" ]]
+    then 
+    wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz 
+        if [[ ! -f "jasper-1.0.3.tar.gz" ]]
+        then
+            echo "jasper file didnt downloaded and retrying"
+            wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz
+        elif [[ -f "jasper-1.0.3.tar.gz" ]]
+        then 
+            echo "file downloaded and processing for the installation"
+        fi 
+        tar zxvf jasper-1.0.3.tar.gz
+        cd jasper-1.0.3
+        ./configure --prefix=$PWD
+        make install
+        export PYTHONPATH=$(pwd)
+        (cd ..)
+    export PATH="${polishedgenome}"/jasper-1.0.3:$PATH
+    jasper.sh -t "${threads}" "${genome_assembly_fasta_file}" \
+            -r "${illumina_directory}"/final.R1.fastq "${illumina_directory}"/final.R1.fastq
+    else 
     java -Xmx100g -jar pilon-1.28.jar --genome "${genome_assembly_fasta_file}" \
                     --frags "${f}".sorted.bam --output "${species}".polished_genome \
                                 --threads 60 --changes --fix all --mindepth 10
+    fi 
     (cd ..)
     echo "processing finished"
 
 elif [[ $species ]] && [[ $species ]]  && [[ $first == "no" ]] && [[ $update == "yes" ]]
                  [[ $assembler == "mecatref" ]] && [[ $alignment_tracks == "yes" ]] &&
-                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]]
+                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]] && [[ $polishoption ]]
 then
     mkdir "$(pwd)/new_genomic_reads"
     mkdir "$(pwd)/combined_assembly"
@@ -443,12 +525,16 @@ then
     done
     for file in "${illumina_directory}"/*.R1.fastq
     do 
+        cat *.R1.fastq >> final.R1.fastq
         echo "$file" > illumina.R1.txt
     done
+        echo final.R1.fastq >> illumina.R1.final.txt
     for file in "${illumina_directory}"/*.R2.fastq
     do 
+        cat *.R2.fastq >> final.R2.fastq
         echo "$file" > illumina.R2.txt
     done
+        echo final.R2.fastq >> illumina.R1.final.txt
     cp -r "${previousassembly}"/*.fasta "${combinedassembly}"
     cp -r "${newreadsdirectory}/*.gz" "${newlongreads}"
     cd "${newlongreads}"
@@ -513,15 +599,38 @@ then
 
     cd "${polishedgenome}"
     cp -r "${genome_assembly_fasta_file}" "${polishedgenome}"
+    if [[ $polishoption == "jasper" ]]
+    then 
+    wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz 
+        if [[ ! -f "jasper-1.0.3.tar.gz" ]]
+        then
+            echo "jasper file didnt downloaded and retrying"
+            wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz
+        elif [[ -f "jasper-1.0.3.tar.gz" ]]
+        then 
+            echo "file downloaded and processing for the installation"
+        fi 
+        tar zxvf jasper-1.0.3.tar.gz
+        cd jasper-1.0.3
+        ./configure --prefix=$PWD
+        make install
+        export PYTHONPATH=$(pwd)
+        (cd ..)
+    export PATH="${polishedgenome}"/jasper-1.0.3:$PATH
+    jasper.sh -t "${threads}" "${genome_assembly_fasta_file}" \
+            -r "${illumina_directory}"/final.R1.fastq "${illumina_directory}"/final.R1.fastq
+    else 
     java -Xmx100g -jar pilon-1.28.jar --genome "${genome_assembly_fasta_file}" \
                     --frags "${f}".sorted.bam --output "${species}".polished_genome \
                                 --threads 60 --changes --fix all --mindepth 10
+    fi 
     (cd ..)
+    echo "processing finished"
     echo "processing finished"
     
 elif  [[ $species ]] && [[ $species ]]  && [[ $first == "no" ]] && [[ $update == "yes" ]]
                  [[ $assembler == "flye" ]] && [[ $alignment_tracks == "yes" ]] &&
-                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]]
+                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]] && [[ $polishoption ]]
 then
     mkdir "$(pwd)/new_genomic_reads"
     mkdir "$(pwd)/combined_assembly"
@@ -545,14 +654,18 @@ then
     do 
         gunzip "$file"
     done
-    for file in "${illumina_directory}"/*.R1.fastq
+   for file in "${illumina_directory}"/*.R1.fastq
     do 
+        cat *.R1.fastq >> final.R1.fastq
         echo "$file" > illumina.R1.txt
     done
+        echo final.R1.fastq >> illumina.R1.final.txt
     for file in "${illumina_directory}"/*.R2.fastq
     do 
+        cat *.R2.fastq >> final.R2.fastq
         echo "$file" > illumina.R2.txt
     done
+        echo final.R2.fastq >> illumina.R1.final.txt
     cp -r "${previousassembly}"/*.fasta "${combinedassembly}"
     cp -r "${newreadsdirectory}/*.gz" "${newlongreads}"
     cd "${newlongreads}"
@@ -613,15 +726,37 @@ then
 
     cd "${polishedgenome}"
     cp -r "${genome_assembly_fasta_file}" "${polishedgenome}"
+    if [[ $polishoption == "jasper" ]]
+    then 
+    wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz 
+        if [[ ! -f "jasper-1.0.3.tar.gz" ]]
+        then
+            echo "jasper file didnt downloaded and retrying"
+            wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz
+        elif [[ -f "jasper-1.0.3.tar.gz" ]]
+        then 
+            echo "file downloaded and processing for the installation"
+        fi 
+        tar zxvf jasper-1.0.3.tar.gz
+        cd jasper-1.0.3
+        ./configure --prefix=$PWD
+        make install
+        export PYTHONPATH=$(pwd)
+        (cd ..)
+    export PATH="${polishedgenome}"/jasper-1.0.3:$PATH
+    jasper.sh -t "${threads}" "${genome_assembly_fasta_file}" \
+            -r "${illumina_directory}"/final.R1.fastq "${illumina_directory}"/final.R1.fastq
+    else 
     java -Xmx100g -jar pilon-1.28.jar --genome "${genome_assembly_fasta_file}" \
                     --frags "${f}".sorted.bam --output "${species}".polished_genome \
                                 --threads 60 --changes --fix all --mindepth 10
+    fi 
     (cd ..)
     echo "processing finished"
 
 elif  [[ $species ]] && [[ $species ]]  && [[ $first == "no" ]] && [[ $update == "yes" ]]
                  [[ $assembler == "mecatref" ]] && [[ $alignment_tracks == "yes" ]] &&
-                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]]
+                 [[ $mapping == "yes" ]] && [[ $coverage == "yes" ]] && [[ $polish == "yes" ]] && [[ $polishoption ]]
 then
 
     mkdir "$(pwd)/new_genomic_reads"
@@ -648,12 +783,16 @@ then
     done
     for file in "${illumina_directory}"/*.R1.fastq
     do 
+        cat *.R1.fastq >> final.R1.fastq
         echo "$file" > illumina.R1.txt
     done
+        echo final.R1.fastq >> illumina.R1.final.txt
     for file in "${illumina_directory}"/*.R2.fastq
     do 
+        cat *.R2.fastq >> final.R2.fastq
         echo "$file" > illumina.R2.txt
     done
+        echo final.R2.fastq >> illumina.R1.final.txt
     cp -r "${previousassembly}"/*.fasta "${combinedassembly}"
     cp -r "${newreadsdirectory}/*.gz" "${newlongreads}"
     cd "${newlongreads}"
@@ -710,12 +849,34 @@ then
 
     cd "${polishedgenome}"
     cp -r "${genome_assembly_fasta_file}" "${polishedgenome}"
+    if [[ $polishoption == "jasper" ]]
+    then 
+    wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz 
+        if [[ ! -f "jasper-1.0.3.tar.gz" ]]
+        then
+            echo "jasper file didnt downloaded and retrying"
+            wget https://github.com/alguoo314/JASPER/releases/download/v1.0.3/jasper-1.0.3.tar.gz
+        elif [[ -f "jasper-1.0.3.tar.gz" ]]
+        then 
+            echo "file downloaded and processing for the installation"
+        fi 
+        tar zxvf jasper-1.0.3.tar.gz
+        cd jasper-1.0.3
+        ./configure --prefix=$PWD
+        make install
+        export PYTHONPATH=$(pwd)
+        (cd ..)
+    export PATH="${polishedgenome}"/jasper-1.0.3:$PATH
+    jasper.sh -t "${threads}" "${genome_assembly_fasta_file}" \
+            -r "${illumina_directory}"/final.R1.fastq "${illumina_directory}"/final.R1.fastq
+    else 
     java -Xmx100g -jar pilon-1.28.jar --genome "${genome_assembly_fasta_file}" \
                     --frags "${f}".sorted.bam --output "${species}".polished_genome \
                                 --threads 60 --changes --fix all --mindepth 10
+    fi 
     (cd ..)
     echo "processing finished"
-    
+
 else 
  printf "%s${closeuptext}"   
 fi     
