@@ -1,9 +1,12 @@
 # dockerized_long_read_genome_assembly_pangraphs
 a complete workflow that can be dockerized for the long read assembly, it allows for the genome assembly update as well as it allows for the assembly from the start. if you have the illumina reads it allows for the genome mapping also. long read dockerized pipeline it will easier to execute and also better for the docker application. it will even make your genome browser tracks. 
 
-You can select the options to make your genome browsers tracks and direct plugins into the jbrowse for the visualization or snp calling tracts for the visualization. \
-Finished code: 2023-10-20, next update will be with the genome visualization tracts. \
-Finished update: 2023-10-21, major changes to the code, added associative arrays and added the support for the multiple genome polishing and also the coverage analysis \
+You can select the options to make your genome browsers tracks and direct plugins into the jbrowse for the visualization or snp calling tracts for the visualization. 
+
+Finished code first release: 2023-10-20, next update will be with the genome visualization tracts. \
+Finished update: 2023-10-21, major changes to the code, added associative arrays and added the support for the multiple genome polishing and also the coverage analysis 
+Next update: adding the docker, portainer, jbrowse, multiple visualization and cluster profiling tools directly from the slurm or pbs.
+
 More support for oxford nanopore in the next release. \
 Adding support for the decalarative arrays and you will get more information. \
 This code is constantly updated and also a docker withe several integrations is in preparation which will allow you to run the dockerized analysis. 
