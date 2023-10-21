@@ -876,7 +876,6 @@ then
     fi 
     (cd ..)
     echo "processing finished"
-
 else 
  printf "%s${closeuptext}"   
 fi     
