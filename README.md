@@ -6,6 +6,8 @@ You can select the options to make your genome browsers tracks and direct plugin
 Finished code first release: 2023-10-20, next update will be with the genome visualization tracts. \
 Finished update: 2023-10-21, major changes to the code, added associative arrays and added the support for the multiple genome polishing such as pilon and jasper and also the coverage analysis \
 Next update: adding the docker, portainer, jbrowse, multiple visualization and cluster profiling tools directly from the slurm or pbs.
+Another update launch this week: adding the support for the complete docker and the instance based launch. 
+Another update launch this week: adding the support for the PacBio HiFi reads also. 
 
 More support for oxford nanopore in the next release. \
 Adding support for the decalarative arrays and you will get more information. \
