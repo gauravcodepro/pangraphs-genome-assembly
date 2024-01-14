@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # -*- coding:  utf-8 -*-
+# Universität Potsdam, Germany
 # Author: Gaurav Sablok
 # date: 2023-10-20
 # long read dockerized pipeline easier to execute and also better for the docker application. 
