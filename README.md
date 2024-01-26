@@ -1,15 +1,16 @@
-# dockerized_long_read_genome_assembly_pangraphs
+# long_read_genome_assembly_pangraphs
 a complete workflow that can be dockerized for the long read assembly, it allows for the genome assembly update as well as it allows for the assembly from the start. if you have the illumina reads it allows for the genome mapping also. long read dockerized pipeline it will easier to execute and also better for the docker application. it will even make your genome browser tracks. 
 
 You can select the options to make your genome browsers tracks and direct plugins into the jbrowse for the visualization or snp calling tracts for the visualization. 
 
 Finished code first release: 2023-10-20, next update will be with the genome visualization tracts. \
 Finished update: 2023-10-21, major changes to the code, added associative arrays and added the support for the multiple genome polishing such as pilon and jasper and also the coverage analysis \
-Next update: adding the docker, portainer, jbrowse, multiple visualization and cluster profiling tools directly from the slurm or pbs.
-2024-1-14:
+Next update: adding the docker, portainer, jbrowse, multiple visualization and cluster profiling tools directly from the slurm or pbs. \
+2024-1-14: \
 Another update launch this week: adding the support for the complete docker and the instance based launch. 
 Another update launch this week: adding the support for the PacBio HiFi reads also. 
-
+2024-1-26 \
+Another update coming with support for the annotations. \
 More support for oxford nanopore in the next release. \
 Adding support for the decalarative arrays and you will get more information. \
 This code is constantly updated and also a docker withe several integrations is in preparation which will allow you to run the dockerized analysis. 
@@ -149,10 +150,9 @@ then
 fi
 ```
 
-
-
-Gaurav Sablok \
-ORCID: https://orcid.org/0000-0002-4157-9405 \
-WOS: https://www.webofscience.com/wos/author/record/C-5940-2014 \
-RubyGems Published: https://rubygems.org/profiles/sablokgaurav \
-Python Packages Published : https://pypi.org/user/sablokgaurav/
+Gaurav Sablok, 
+Academic Staff Member,
+Bioinformatics, 
+Institute for Biochemistry and Biology, 
+University of Potsdam,Potsdam,
+Germany
