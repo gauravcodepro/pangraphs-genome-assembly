@@ -150,9 +150,9 @@ then
 fi
 ```
 
-Gaurav Sablok, 
-Academic Staff Member,
-Bioinformatics, 
-Institute for Biochemistry and Biology, 
-University of Potsdam,Potsdam,
+Gaurav Sablok, \
+Academic Staff Member,\
+Bioinformatics, \
+Institute for Biochemistry and Biology, \
+University of Potsdam,Potsdam,\
 Germany
