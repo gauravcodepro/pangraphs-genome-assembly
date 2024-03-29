@@ -1,4 +1,4 @@
-# pangraphs_pacbio_nanopore_genome_assembly
+# pangraphs-pacbio-nanopore-genome-assembly
 This code is constantly updated and also a docker withe several integrations is in preparation which will allow you to run the dockerized analysis. 
 a complete workflow that can be dockerized for the long read assembly, it allows for the genome assembly update as well as it allows for the assembly from the start. if you have the illumina reads it allows for the genome mapping also. long read dockerized pipeline it will easier to execute and also better for the docker application. it will even make your genome browser tracks. You can select the options to make your genome browsers tracks and direct plugins into the jbrowse for the visualization or snp calling tracts for the visualization. 
 2023-10-20, finished code first release: next update will be with the genome visualization tracts. \
